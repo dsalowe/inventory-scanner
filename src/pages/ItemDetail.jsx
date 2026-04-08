@@ -34,7 +34,7 @@ export default function ItemDetail() {
 
   if (loading) return (
     <div className="flex items-center justify-center min-h-64">
-      <div className="w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-purple-400 border-t-transparent rounded-full animate-spin" />
     </div>
   )
 
@@ -67,7 +67,7 @@ export default function ItemDetail() {
             <p className="text-slate-400 text-xs">Total</p>
           </div>
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-400">{item.available_quantity}</p>
+            <p className="text-2xl font-bold text-purple-300">{item.available_quantity}</p>
             <p className="text-slate-400 text-xs">Available</p>
           </div>
           <div className="text-center">
@@ -148,7 +148,7 @@ export default function ItemDetail() {
                   <div className="text-right flex-shrink-0">
                     <p className="text-xs text-slate-400">Qty: {tx.quantity}</p>
                     <p className="text-xs text-slate-500">{formatDate(tx.checked_out_at)}</p>
-                    {tx.checked_in_at && <p className="text-xs text-green-500">↩ {formatDate(tx.checked_in_at)}</p>}
+                    {tx.checked_in_at && <p className="text-xs text-purple-400">↩ {formatDate(tx.checked_in_at)}</p>}
                   </div>
                 </div>
               </div>

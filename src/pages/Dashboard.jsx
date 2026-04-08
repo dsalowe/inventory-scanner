@@ -56,10 +56,10 @@ export default function Dashboard() {
 
       {/* Big scan button */}
       <Link to="/scan" className="block mb-6">
-        <div className="card bg-green-500/10 border-green-500/40 hover:bg-green-500/20 active:bg-green-500/30 transition-colors cursor-pointer">
+        <div className="card bg-purple-400/10 border-purple-400/40 hover:bg-purple-400/20 active:bg-purple-400/30 transition-colors cursor-pointer">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-green-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-14 h-14 bg-purple-400/20 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-7 h-7 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8H3m2 8h-.01M5 8v-.01M5 8H3m2-4h14a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V6a2 2 0 012-2z" />
               </svg>
             </div>
@@ -111,7 +111,7 @@ export default function Dashboard() {
           <div className="space-y-2">
             {recent.map(tx => (
               <Link key={tx.id} to={`/item/${tx.item_id}`} className="card flex items-center gap-3 hover:bg-slate-700 active:bg-slate-600 transition-colors block">
-                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${tx.type === 'checkout' ? 'bg-red-400' : 'bg-green-400'}`} />
+                <div className={`w-2 h-2 rounded-full flex-shrink-0 ${tx.type === 'checkout' ? 'bg-red-400' : 'bg-purple-300'}`} />
                 <div className="flex-1 min-w-0">
                   <p className="font-medium text-sm text-white truncate">{tx.items?.name || 'Unknown'}</p>
                   <p className="text-xs text-slate-500">{tx.items?.sku} · {tx.borrower_name || 'N/A'}</p>

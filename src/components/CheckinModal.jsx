@@ -57,7 +57,7 @@ export default function CheckinModal({ item, transaction, allActive, onClose, on
                 <label className="label">Select Checkout</label>
                 <div className="space-y-2">
                   {allActive.map(t => (
-                    <label key={t.id} className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selected === t.id ? 'border-green-500 bg-green-500/10' : 'border-slate-700 hover:border-slate-600'}`}>
+                    <label key={t.id} className={`flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-colors ${selected === t.id ? 'border-purple-400 bg-purple-400/10' : 'border-slate-700 hover:border-slate-600'}`}>
                       <input type="radio" name="tx" value={t.id} checked={selected === t.id} onChange={() => setSelected(t.id)} className="mt-0.5" />
                       <div>
                         <p className="text-sm font-medium text-white">{t.borrower_name}</p>

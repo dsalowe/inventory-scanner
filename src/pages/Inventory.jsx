@@ -54,7 +54,7 @@ export default function Inventory() {
             onClick={() => setFilter(f)}
             className={`flex-1 py-2 rounded-xl text-sm font-medium transition-colors ${
               filter === f
-                ? 'bg-green-500/20 text-green-400 border border-green-500/40'
+                ? 'bg-purple-400/20 text-purple-300 border border-purple-400/40'
                 : 'bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700'
             }`}
           >
@@ -86,7 +86,7 @@ export default function Inventory() {
                 </div>
                 <div className="text-right flex-shrink-0">
                   <p className="text-sm font-medium">
-                    <span className={item.available_quantity > 0 ? 'text-green-400' : 'text-red-400'}>
+                    <span className={item.available_quantity > 0 ? 'text-purple-300' : 'text-red-400'}>
                       {item.available_quantity}
                     </span>
                     <span className="text-slate-500"> / {item.total_quantity}</span>
@@ -96,7 +96,7 @@ export default function Inventory() {
                 {/* Bar */}
                 <div className="w-1 h-10 rounded-full bg-slate-700 flex-shrink-0 overflow-hidden">
                   <div
-                    className={`w-full rounded-full transition-all ${pct > 0.5 ? 'bg-green-400' : pct > 0 ? 'bg-yellow-400' : 'bg-red-400'}`}
+                    className={`w-full rounded-full transition-all ${pct > 0.5 ? 'bg-purple-300' : pct > 0 ? 'bg-yellow-400' : 'bg-red-400'}`}
                     style={{ height: `${pct * 100}%`, marginTop: `${(1 - pct) * 100}%` }}
                   />
                 </div>

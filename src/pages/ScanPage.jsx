@@ -209,7 +209,7 @@ export default function ScanPage() {
         <div id="qr-reader" className="w-full rounded-2xl overflow-hidden bg-slate-900 min-h-[260px]" />
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div
-            className={`border-2 rounded-xl w-64 h-48 ${phase === 'student' ? 'border-blue-400/60' : 'border-green-400/60'}`}
+            className={`border-2 rounded-xl w-64 h-48 ${phase === 'student' ? 'border-blue-400/60' : 'border-purple-300/60'}`}
             style={{ boxShadow: '0 0 0 9999px rgba(15,23,42,0.5)' }}
           />
         </div>
@@ -217,7 +217,7 @@ export default function ScanPage() {
         <div className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-medium ${
           phase === 'student'
             ? 'bg-blue-500/30 text-blue-300 border border-blue-500/50'
-            : 'bg-green-500/30 text-green-300 border border-green-500/50'
+            : 'bg-purple-400/30 text-purple-200 border border-purple-400/50'
         }`}>
           {phase === 'student' ? '👤 Student' : '📦 Item'}
         </div>
@@ -234,7 +234,7 @@ export default function ScanPage() {
         <div className={`fixed top-4 left-4 right-4 z-50 max-w-lg mx-auto px-4 py-3 rounded-xl text-sm font-medium text-center transition-all ${
           toast.type === 'error'
             ? 'bg-red-600 text-white'
-            : 'bg-green-600 text-white'
+            : 'bg-purple-500 text-white'
         }`}>
           {toast.message}
         </div>
@@ -268,7 +268,7 @@ export default function ScanPage() {
           <div className="space-y-2">
             {scannedItems.map((item, i) => (
               <div key={`${item.id}-${i}`} className="card py-3 flex items-center gap-3">
-                <div className="w-2 h-2 bg-green-400 rounded-full flex-shrink-0" />
+                <div className="w-2 h-2 bg-purple-300 rounded-full flex-shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-white truncate">{item.name}</p>
                   <p className="text-xs text-slate-500">{item.sku}</p>

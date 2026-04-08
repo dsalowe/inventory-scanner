@@ -282,14 +282,14 @@ export default function ImportStudents() {
       {/* Step 4: Done */}
       {step === 'done' && result && (
         <div className="card text-center py-8">
-          <div className="w-14 h-14 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-7 h-7 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-14 h-14 bg-purple-400/20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg className="w-7 h-7 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <h2 className="text-lg font-bold text-white mb-2">Import Complete</h2>
           <p className="text-slate-400 text-sm mb-1">
-            <span className="text-green-400 font-medium">{result.imported}</span> students imported
+            <span className="text-purple-300 font-medium">{result.imported}</span> students imported
           </p>
           {result.skipped > 0 && (
             <p className="text-slate-500 text-xs mb-1">{result.skipped} duplicates skipped</p>

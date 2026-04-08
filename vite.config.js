@@ -11,8 +11,8 @@ export default defineConfig({
         name: 'Inventory Scanner',
         short_name: 'InvScan',
         description: 'Scan and manage inventory with check-in/out tracking',
-        theme_color: '#0f172a',
-        background_color: '#0f172a',
+        theme_color: '#1e1b2e',
+        background_color: '#1e1b2e',
         display: 'standalone',
         orientation: 'portrait',
         icons: [

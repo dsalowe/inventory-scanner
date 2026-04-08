@@ -40,7 +40,7 @@ export default function Navbar() {
           const active = location.pathname === tab.to
           if (tab.scan) return (
             <Link key={tab.to} to={tab.to} className="flex flex-col items-center">
-              <div className={`w-14 h-14 -mt-6 rounded-full flex items-center justify-center border-4 border-slate-950 transition-all ${active ? 'bg-green-400' : 'bg-green-500 hover:bg-green-400'}`}>
+              <div className={`w-14 h-14 -mt-6 rounded-full flex items-center justify-center border-4 border-slate-950 transition-all ${active ? 'bg-purple-300' : 'bg-purple-400 hover:bg-purple-300'}`}>
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   {tab.icon}
                 </svg>
@@ -50,10 +50,10 @@ export default function Navbar() {
           )
           return (
             <Link key={tab.to} to={tab.to} className="flex flex-col items-center py-1 px-3">
-              <svg className={`w-6 h-6 transition-colors ${active ? 'text-green-400' : 'text-slate-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className={`w-6 h-6 transition-colors ${active ? 'text-purple-300' : 'text-slate-500'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {tab.icon}
               </svg>
-              <span className={`text-xs mt-0.5 transition-colors ${active ? 'text-green-400' : 'text-slate-500'}`}>{tab.label}</span>
+              <span className={`text-xs mt-0.5 transition-colors ${active ? 'text-purple-300' : 'text-slate-500'}`}>{tab.label}</span>
             </Link>
           )
         })}
