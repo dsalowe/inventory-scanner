@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 
 export default function Login() {
   const { signIn, signUp } = useAuth()
-  const [mode, setMode] = useState('signin') // 'signin' | 'signup'
+  const [mode, setMode] = useState('signin') // 'signin' | 'signup' | 'reset'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -16,13 +17,17 @@ export default function Login() {
     setMessage('')
     setLoading(true)
     try {
-      if (mode === 'signin') {
+      if (mode === 'reset') {
+        const { error } = await supabase.auth.resetPasswordForEmail(email)
+        if (error) throw error
+        setMessage('Password reset link sent! Check your email.')
+      } else if (mode === 'signin') {
         const { error } = await signIn(email, password)
         if (error) throw error
       } else {
         const { error } = await signUp(email, password)
         if (error) throw error
-        setMessage('Check your email to confirm your account.')
+        setMessage('Account created! You can now sign in.')
       }
     } catch (err) {
       setError(err.message)
@@ -43,7 +48,7 @@ export default function Login() {
           </div>
           <h1 className="text-2xl font-bold text-white">Inventory Scanner</h1>
           <p className="text-slate-400 text-sm mt-1">
-            {mode === 'signin' ? 'Sign in to your account' : 'Create an account'}
+            {mode === 'signin' ? 'Sign in to your account' : mode === 'signup' ? 'Create an account' : 'Reset your password'}
           </p>
         </div>
 
@@ -60,18 +65,20 @@ export default function Login() {
               autoComplete="email"
             />
           </div>
-          <div>
-            <label className="label">Password</label>
-            <input
-              type="password"
-              className="input"
-              placeholder="••••••••"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
-            />
-          </div>
+          {mode !== 'reset' && (
+            <div>
+              <label className="label">Password</label>
+              <input
+                type="password"
+                className="input"
+                placeholder="••••••••"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                required
+                autoComplete={mode === 'signin' ? 'current-password' : 'new-password'}
+              />
+            </div>
+          )}
 
           {error && (
             <p className="text-red-400 text-sm bg-red-900/20 border border-red-800 rounded-xl px-4 py-2">
@@ -88,15 +95,26 @@ export default function Login() {
             {loading ? (
               <span className="flex items-center justify-center gap-2">
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                {mode === 'signin' ? 'Signing in…' : 'Creating account…'}
+                {mode === 'signin' ? 'Signing in…' : mode === 'signup' ? 'Creating account…' : 'Sending reset link…'}
               </span>
             ) : (
-              mode === 'signin' ? 'Sign In' : 'Create Account'
+              mode === 'signin' ? 'Sign In' : mode === 'signup' ? 'Create Account' : 'Send Reset Link'
             )}
           </button>
         </form>
 
-        <p className="text-center text-slate-400 text-sm mt-6">
+        {mode === 'signin' && (
+          <p className="text-center text-slate-500 text-sm mt-3">
+            <button
+              className="text-slate-400 hover:text-slate-300"
+              onClick={() => { setMode('reset'); setError(''); setMessage('') }}
+            >
+              Forgot password?
+            </button>
+          </p>
+        )}
+
+        <p className="text-center text-slate-400 text-sm mt-4">
           {mode === 'signin' ? "Don't have an account? " : 'Already have an account? '}
           <button
             className="text-green-400 hover:text-green-300 font-medium"

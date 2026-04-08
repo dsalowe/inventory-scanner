@@ -64,8 +64,8 @@ export default function Dashboard() {
               </svg>
             </div>
             <div>
-              <p className="font-semibold text-white text-lg">Scan Item</p>
-              <p className="text-slate-400 text-sm">Check in or check out using camera</p>
+              <p className="font-semibold text-white text-lg">Start Checkout</p>
+              <p className="text-slate-400 text-sm">Scan student ID, then scan their items</p>
             </div>
             <svg className="w-5 h-5 text-slate-500 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
