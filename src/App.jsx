@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard'
 import ScanPage from './pages/ScanPage'
 import Inventory from './pages/Inventory'
 import ItemDetail from './pages/ItemDetail'
+import ImportStudents from './pages/ImportStudents'
 import Navbar from './components/Navbar'
 
 function ProtectedRoute({ children }) {
@@ -29,6 +30,7 @@ function AppRoutes() {
           <Route path="/scan" element={<ProtectedRoute><ScanPage /></ProtectedRoute>} />
           <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
           <Route path="/item/:id" element={<ProtectedRoute><ItemDetail /></ProtectedRoute>} />
+          <Route path="/import" element={<ProtectedRoute><ImportStudents /></ProtectedRoute>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
