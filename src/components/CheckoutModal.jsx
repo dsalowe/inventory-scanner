@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
 import { useAuth } from '../context/AuthContext'
 
@@ -14,8 +14,51 @@ export default function CheckoutModal({ item, onClose, onDone }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  // Student autocomplete
+  const [suggestions, setSuggestions] = useState([])
+  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [selectedStudent, setSelectedStudent] = useState(null)
+  const debounceRef = useRef(null)
+
   function set(field, value) {
     setForm(f => ({ ...f, [field]: value }))
+  }
+
+  function handleNameChange(value) {
+    set('borrower_name', value)
+    setSelectedStudent(null)
+
+    // Debounce the search
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+
+    if (value.trim().length < 2) {
+      setSuggestions([])
+      setShowSuggestions(false)
+      return
+    }
+
+    debounceRef.current = setTimeout(async () => {
+      const { data } = await supabase
+        .from('students')
+        .select('*')
+        .ilike('name', `${value.trim()}%`)
+        .order('name')
+        .limit(8)
+
+      setSuggestions(data || [])
+      setShowSuggestions((data || []).length > 0)
+    }, 200)
+  }
+
+  function selectStudent(student) {
+    setForm(f => ({
+      ...f,
+      borrower_name: student.name,
+      borrower_contact: student.contact || f.borrower_contact
+    }))
+    setSelectedStudent(student)
+    setSuggestions([])
+    setShowSuggestions(false)
   }
 
   async function handleSubmit(e) {
@@ -33,7 +76,9 @@ export default function CheckoutModal({ item, onClose, onDone }) {
       quantity: qty,
       borrower_name: form.borrower_name.trim(),
       borrower_contact: form.borrower_contact.trim() || null,
-      notes: form.notes.trim() || null,
+      notes: selectedStudent
+        ? `Student: ${selectedStudent.student_code}${form.notes.trim() ? ' · ' + form.notes.trim() : ''}`
+        : form.notes.trim() || null,
       due_date: form.due_date || null,
       created_by: user?.id
     })
@@ -64,10 +109,54 @@ export default function CheckoutModal({ item, onClose, onDone }) {
           <p className="text-slate-400 text-sm mb-4">{item.name} · <span className="font-mono">{item.sku}</span> · {item.available_quantity} available</p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="label">Borrower Name *</label>
-              <input className="input" placeholder="Full name" value={form.borrower_name} onChange={e => set('borrower_name', e.target.value)} required autoFocus />
+            {/* Name with autocomplete */}
+            <div className="relative">
+              <label className="label">Student / Borrower Name *</label>
+              <input
+                className="input"
+                placeholder="Start typing a name…"
+                value={form.borrower_name}
+                onChange={e => handleNameChange(e.target.value)}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+                required
+                autoFocus
+                autoComplete="off"
+              />
+              {selectedStudent && (
+                <div className="absolute right-3 top-[2.1rem] flex items-center gap-1">
+                  <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full border border-blue-500/40">
+                    {selectedStudent.student_code}
+                  </span>
+                </div>
+              )}
+              {showSuggestions && (
+                <div className="absolute z-10 left-0 right-0 top-full mt-1 bg-slate-700 border border-slate-600 rounded-xl overflow-hidden shadow-xl">
+                  {suggestions.map(s => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      className="w-full text-left px-4 py-3 hover:bg-slate-600 active:bg-slate-500 transition-colors flex items-center gap-3 border-b border-slate-600/50 last:border-0"
+                      onMouseDown={() => selectStudent(s)}
+                    >
+                      <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-white">{s.name}</p>
+                        <p className="text-xs text-slate-400">
+                          {s.student_code}
+                          {s.contact && ` · ${s.contact}`}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
+
             <div>
               <label className="label">Contact (phone or email)</label>
               <input className="input" placeholder="Optional" value={form.borrower_contact} onChange={e => set('borrower_contact', e.target.value)} />
