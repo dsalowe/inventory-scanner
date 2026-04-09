@@ -146,7 +146,34 @@ export default function ScanPage() {
   }
 
   // ── End session ──
-  function endSession() {
+  async function endSession() {
+    // Send email if student has a contact email and items were scanned
+    if (student?.contact && scannedItems.length > 0 && student.contact.includes('@')) {
+      showToast('Sending receipt email…')
+      try {
+        const res = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentName: student.name,
+            studentEmail: student.contact,
+            items: scannedItems.map(i => ({ name: i.name, sku: i.sku, quantity: 1 })),
+            checkedOutBy: user?.email?.split('@')[0] || null
+          })
+        })
+        if (res.ok) {
+          showToast('Receipt emailed to ' + student.contact)
+        } else {
+          const data = await res.json()
+          showToast('Email failed: ' + (data.error || 'Unknown error'), 'error')
+        }
+      } catch (err) {
+        showToast('Email failed: ' + err.message, 'error')
+      }
+      // Small delay so user sees the toast
+      await new Promise(r => setTimeout(r, 2000))
+    }
+
     setStudent(null)
     setPhase('student')
     setScannedItems([])
