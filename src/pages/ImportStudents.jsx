@@ -138,7 +138,7 @@ export default function ImportStudents() {
       }))
       const { data, error } = await supabase
         .from('students')
-        .upsert(batch, { onConflict: 'student_code', ignoreDuplicates: true })
+        .upsert(batch, { onConflict: 'student_code' })
         .select()
 
       if (error) {
@@ -240,7 +240,7 @@ export default function ImportStudents() {
       {step === 'preview' && (
         <div>
           <p className="text-slate-400 text-sm mb-4">
-            Ready to import <span className="text-white font-medium">{preview.length} students</span>. Duplicates (same student code) will be skipped.
+            Ready to import <span className="text-white font-medium">{preview.length} students</span>. Existing students (same code) will be updated with new info.
           </p>
 
           <div className="space-y-2 mb-6 max-h-80 overflow-y-auto">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 import CheckoutModal from '../components/CheckoutModal'
@@ -17,6 +17,15 @@ export default function ItemDetail() {
   const [loading, setLoading] = useState(true)
   const [checkoutModal, setCheckoutModal] = useState(false)
   const [checkinModal, setCheckinModal] = useState(null) // transaction
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  async function handleDelete() {
+    setDeleting(true)
+    await supabase.from('transactions').delete().eq('item_id', id)
+    await supabase.from('items').delete().eq('id', id)
+    navigate('/inventory', { replace: true })
+  }
 
   async function load() {
     const [{ data: itemData }, { data: txData }] = await Promise.all([
@@ -80,7 +89,7 @@ export default function ItemDetail() {
       </div>
 
       {/* Actions */}
-      <div className="flex gap-3 mb-6">
+      <div className="flex gap-3 mb-4">
         <button
           onClick={() => setCheckoutModal(true)}
           className="btn-primary flex-1"
@@ -96,6 +105,28 @@ export default function ItemDetail() {
           Check In {activeCheckouts.length > 0 && `(${activeCheckouts.length})`}
         </button>
       </div>
+
+      {/* Delete */}
+      {!showDeleteConfirm ? (
+        <button
+          onClick={() => setShowDeleteConfirm(true)}
+          className="text-red-400 hover:text-red-300 text-sm mb-6 block"
+        >
+          Delete this item
+        </button>
+      ) : (
+        <div className="card border-red-900/50 bg-red-900/10 mb-6">
+          <p className="text-sm text-red-300 mb-3">
+            Are you sure? This will permanently delete <strong>{item.name}</strong> and all its transaction history.
+          </p>
+          <div className="flex gap-3">
+            <button onClick={() => setShowDeleteConfirm(false)} className="btn-secondary flex-1 text-sm py-2">Cancel</button>
+            <button onClick={handleDelete} className="btn-danger flex-1 text-sm py-2" disabled={deleting}>
+              {deleting ? 'Deleting…' : 'Yes, Delete'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Active checkouts */}
       {activeCheckouts.length > 0 && (
