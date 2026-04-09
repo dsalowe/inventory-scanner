@@ -21,6 +21,11 @@ export default function ScanPage() {
   const [showManual, setShowManual] = useState(false)
   const [manualCode, setManualCode] = useState('')
 
+  // Student search autocomplete
+  const [studentSuggestions, setStudentSuggestions] = useState([])
+  const [showStudentSuggestions, setShowStudentSuggestions] = useState(false)
+  const debounceRef = useRef(null)
+
   // Modals
   const [newStudentModal, setNewStudentModal] = useState(null)
   const [newItemModal, setNewItemModal] = useState(null)
@@ -269,14 +274,80 @@ export default function ScanPage() {
 
       {/* Manual entry */}
       {!showManual ? (
-        <button onClick={() => setShowManual(true)} className="btn-secondary w-full text-sm">
-          Enter {phase === 'student' ? 'student code' : 'SKU'} manually
+        <button onClick={() => { setShowManual(true); setManualCode(''); setStudentSuggestions([]); setShowStudentSuggestions(false) }} className="btn-secondary w-full text-sm">
+          {phase === 'student' ? 'Search or enter student manually' : 'Enter SKU manually'}
         </button>
+      ) : phase === 'student' ? (
+        /* Student search with autocomplete */
+        <div className="relative">
+          <div className="flex gap-2">
+            <input
+              className="input flex-1"
+              placeholder="Type name or student code…"
+              value={manualCode}
+              onChange={e => {
+                const val = e.target.value
+                setManualCode(val)
+                if (debounceRef.current) clearTimeout(debounceRef.current)
+                if (val.trim().length < 2) {
+                  setStudentSuggestions([])
+                  setShowStudentSuggestions(false)
+                  return
+                }
+                debounceRef.current = setTimeout(async () => {
+                  const { data } = await supabase
+                    .from('students')
+                    .select('*')
+                    .or(`name.ilike.%${val.trim()}%,student_code.ilike.%${val.trim()}%`)
+                    .order('name')
+                    .limit(8)
+                  setStudentSuggestions(data || [])
+                  setShowStudentSuggestions((data || []).length > 0)
+                }, 200)
+              }}
+              onFocus={() => studentSuggestions.length > 0 && setShowStudentSuggestions(true)}
+              autoFocus
+              autoComplete="off"
+            />
+            <button type="button" onClick={handleManualSubmit} className="btn-primary px-4">Go</button>
+            <button type="button" onClick={() => { setShowManual(false); setShowStudentSuggestions(false) }} className="btn-secondary px-4">✕</button>
+          </div>
+          {showStudentSuggestions && (
+            <div className="absolute z-10 left-0 right-0 top-full mt-1 bg-slate-700 border border-slate-600 rounded-xl overflow-hidden shadow-xl">
+              {studentSuggestions.map(s => (
+                <button
+                  key={s.id}
+                  type="button"
+                  className="w-full text-left px-4 py-3 hover:bg-slate-600 active:bg-slate-500 transition-colors flex items-center gap-3 border-b border-slate-600/50 last:border-0"
+                  onClick={() => {
+                    setShowStudentSuggestions(false)
+                    setShowManual(false)
+                    startSession(s)
+                  }}
+                >
+                  <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-white">{s.name}</p>
+                    <p className="text-xs text-slate-400">
+                      {s.student_code}
+                      {s.contact && ` · ${s.contact}`}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       ) : (
+        /* Item SKU manual entry */
         <form onSubmit={handleManualSubmit} className="flex gap-2">
           <input
             className="input flex-1"
-            placeholder={phase === 'student' ? 'Student code…' : 'Item SKU…'}
+            placeholder="Item SKU…"
             value={manualCode}
             onChange={e => setManualCode(e.target.value)}
             autoFocus
